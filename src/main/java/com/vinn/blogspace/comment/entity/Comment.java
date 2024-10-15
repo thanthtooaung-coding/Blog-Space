@@ -2,7 +2,7 @@ package com.vinn.blogspace.comment.entity;
 
 import com.vinn.blogspace.comment.enums.CommentStatus;
 import com.vinn.blogspace.user.entity.User;
-import com.vinn.blogspace.post.entity.Post;
+import com.vinn.blogspace.post.user.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 

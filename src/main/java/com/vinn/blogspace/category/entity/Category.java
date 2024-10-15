@@ -1,6 +1,6 @@
 package com.vinn.blogspace.category.entity;
 
-import com.vinn.blogspace.post.entity.Post;
+import com.vinn.blogspace.post.user.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 

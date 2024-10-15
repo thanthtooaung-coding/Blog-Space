@@ -1,7 +1,7 @@
 package com.vinn.blogspace.user.entity;
 
 import com.vinn.blogspace.user.enums.UserRole;
-import com.vinn.blogspace.post.entity.Post;
+import com.vinn.blogspace.post.user.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 
