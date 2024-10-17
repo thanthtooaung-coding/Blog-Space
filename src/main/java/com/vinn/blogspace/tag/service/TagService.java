@@ -6,7 +6,7 @@ import com.vinn.blogspace.tag.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface TagService extends BaseService<Tag,Long> {
+public interface TagService extends BaseService<Tag, Long> {
     TagDto getTagById(Long id);
     Page<TagDto> getAllTags(Pageable pageable);
     TagDto createTag(TagDto tagDto);

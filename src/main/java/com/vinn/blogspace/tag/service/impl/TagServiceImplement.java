@@ -1,6 +1,5 @@
 package com.vinn.blogspace.tag.service.impl;
 
-import com.vinn.blogspace.common.exceptions.EntityDeletionException;
 import com.vinn.blogspace.common.services.impl.BaseServiceImpl;
 import com.vinn.blogspace.tag.dto.TagDto;
 import com.vinn.blogspace.tag.entity.Tag;
@@ -54,10 +53,6 @@ public class TagServiceImplement extends BaseServiceImpl<Tag, Long> implements T
 
     @Override
     public void deleteTag(Long id) {
-        Tag tag = findById(id);
-        if (!tag.getPosts().isEmpty()) {
-            throw new EntityDeletionException(getEntityName(), "related records");
-        }
-        delete(id);
+        deleteEntityWithCheck(id, tag -> !tag.getPosts().isEmpty());
     }
 }

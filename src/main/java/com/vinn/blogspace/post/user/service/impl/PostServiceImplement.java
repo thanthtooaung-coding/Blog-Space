@@ -15,6 +15,7 @@ import com.vinn.blogspace.user.entity.User;
 import com.vinn.blogspace.user.repository.UserRepository;
 import com.vinn.blogspace.post.user.service.PostService;
 import com.vinn.blogspace.common.services.impl.BaseServiceImpl;
+import com.vinn.blogspace.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public class PostServiceImplement extends BaseServiceImpl<Post, Long> implements
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final UserService userService;
 
     @Override
     protected PostRepository getRepository() {
@@ -68,8 +70,7 @@ public class PostServiceImplement extends BaseServiceImpl<Post, Long> implements
     @Transactional
     public PostDto createPost(PostCreateDto postCreateDto) {
         Post post = modelMapper.map(postCreateDto, Post.class);
-        User author = userRepository.findById(postCreateDto.getAuthorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Author", "id", postCreateDto.getAuthorId()));
+        User author = userService.findById(postCreateDto.getAuthorId());
         post.setAuthor(author);
         setCategories(post, postCreateDto.getCategoryIds());
         setTags(post, postCreateDto.getTags());
