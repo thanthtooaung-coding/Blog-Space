@@ -34,5 +34,5 @@ public class PostCreateDto {
 
     private List<Long> categoryIds;
 
-    private List<Long> tagIds;
+    private List<String> tags;
 }

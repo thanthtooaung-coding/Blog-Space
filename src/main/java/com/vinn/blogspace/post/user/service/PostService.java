@@ -21,4 +21,6 @@ public interface PostService extends BaseService<Post, Long> {
 
     @Transactional
     void deletePost(Long id);
+
+    Page<PostDto> getPostsByUser(String username, Pageable pageable);
 }

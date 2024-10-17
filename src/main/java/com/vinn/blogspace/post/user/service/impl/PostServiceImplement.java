@@ -24,10 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class PostServiceImpl extends BaseServiceImpl<Post, Long> implements PostService {
+public class PostServiceImplement extends BaseServiceImpl<Post, Long> implements PostService {
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
@@ -48,12 +49,19 @@ public class PostServiceImpl extends BaseServiceImpl<Post, Long> implements Post
     @Override
     public PostDto getPostById(Long id) {
         Post post = findById(id);
-        return modelMapper.map(post, PostDto.class);
+        return convertToPostDto(post);
     }
 
     @Override
     public Page<PostDto> getAllPosts(Pageable pageable) {
-        return findAll(pageable).map(post -> modelMapper.map(post, PostDto.class));
+        return findAll(pageable).map(this::convertToPostDto);
+    }
+
+    private PostDto convertToPostDto(Post post) {
+        PostDto postDto = modelMapper.map(post, PostDto.class);
+        List<Long> tagIds = post.getTags().stream().map(Tag::getId).collect(Collectors.toList());
+        postDto.setTagIds(tagIds);
+        return postDto;
     }
 
     @Override
@@ -64,7 +72,7 @@ public class PostServiceImpl extends BaseServiceImpl<Post, Long> implements Post
                 .orElseThrow(() -> new ResourceNotFoundException("Author", "id", postCreateDto.getAuthorId()));
         post.setAuthor(author);
         setCategories(post, postCreateDto.getCategoryIds());
-        setTags(post, postCreateDto.getTagIds());
+        setTags(post, postCreateDto.getTags());
         Post savedPost = create(post);
         return modelMapper.map(savedPost, PostDto.class);
     }
@@ -75,7 +83,7 @@ public class PostServiceImpl extends BaseServiceImpl<Post, Long> implements Post
         Post existingPost = findById(id);
         modelMapper.map(postUpdateDto, existingPost);
         setCategories(existingPost, postUpdateDto.getCategoryIds());
-        setTags(existingPost, postUpdateDto.getTagIds());
+        setTags(existingPost, postUpdateDto.getTags());
         Post updatedPost = update(id, existingPost);
         return modelMapper.map(updatedPost, PostDto.class);
     }
@@ -122,10 +130,26 @@ public class PostServiceImpl extends BaseServiceImpl<Post, Long> implements Post
         }
     }
 
-    private void setTags(Post post, List<Long> tagIds) {
-        if (tagIds != null) {
-            List<Tag> tags = tagRepository.findAllById(tagIds);
+    private void setTags(Post post, List<String> tagNames) {
+        if (tagNames != null) {
+            List<Tag> tags = tagNames.stream()
+                    .map(tagName -> tagRepository.findByName(tagName)
+                            .orElseGet(() -> {
+                                Tag newTag = new Tag();
+                                newTag.setName(tagName);
+                                return tagRepository.save(newTag);
+                            })).collect(Collectors.toList());
+
             post.setTags(tags);
         }
+    }
+
+    @Override
+    public Page<PostDto> getPostsByUser(String username, Pageable pageable) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        Page<Post> posts = postRepository.findByAuthor(user, pageable);
+        return posts.map(post -> modelMapper.map(post, PostDto.class));
     }
 }

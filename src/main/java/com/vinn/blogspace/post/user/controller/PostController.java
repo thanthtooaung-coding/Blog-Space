@@ -111,4 +111,23 @@ public class PostController {
         EntityModel<PostDto> resource = postModelAssembler.toModel(updatedPost);
         return ResponseEntity.ok(resource);
     }
+
+    @GetMapping("/by-user/{username}")
+    public ResponseEntity<PagedModel<EntityModel<PostDto>>> getPostsByUser(
+            @PathVariable String username,
+            Pageable pageable) {
+        Page<PostDto> posts = postService.getPostsByUser(username, pageable);
+        PagedModel<EntityModel<PostDto>> pagedModel = PagedModel.of(
+                posts.getContent().stream()
+                        .map(postModelAssembler::toModel)
+                        .collect(Collectors.toList()),
+                new PagedModel.PageMetadata(
+                        posts.getSize(),
+                        posts.getNumber(),
+                        posts.getTotalElements(),
+                        posts.getTotalPages()
+                )
+        );
+        return ResponseEntity.ok(pagedModel);
+    }
 }

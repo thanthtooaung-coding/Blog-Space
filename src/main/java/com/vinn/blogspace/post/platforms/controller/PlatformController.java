@@ -28,25 +28,25 @@ public class PlatformController {
 	@Autowired
 	private FacebookService facebookService;
 
-	@GetMapping("github/{username}")
+	@GetMapping("/github/{username}")
 	public ResponseEntity<PagedModel<EntityModel<GitHubRepoDto>>> getReposByUsername(@PathVariable String username,
 			Pageable pageable) throws Exception {
 
 		Page<GitHubRepoDto> repos = gitHubService.getReposByUsername(username, pageable);
 		PagedModel<EntityModel<GitHubRepoDto>> pagedModel = PagedModel.of(
-				repos.getContent().stream().map(repo -> EntityModel.of(repo)).collect(Collectors.toList()),
+				repos.getContent().stream().map(EntityModel::of).collect(Collectors.toList()),
 				new PagedModel.PageMetadata(repos.getSize(), repos.getNumber(), repos.getTotalElements(),
 						repos.getTotalPages()));
 		return ResponseEntity.ok(pagedModel);
 	}
 
-	@GetMapping("facebook/{username}")
+	@GetMapping("/facebook/{username}")
 	public ResponseEntity<PagedModel<EntityModel<FacebookPostDto>>> getPostsByUsername(@PathVariable String username,
 			Pageable pageable) throws Exception {
 
 		Page<FacebookPostDto> posts = facebookService.getPostsByUsername(username, pageable);
 		PagedModel<EntityModel<FacebookPostDto>> pagedModel = PagedModel.of(
-				posts.getContent().stream().map(post -> EntityModel.of(post)).collect(Collectors.toList()),
+				posts.getContent().stream().map(EntityModel::of).collect(Collectors.toList()),
 				new PagedModel.PageMetadata(posts.getSize(), posts.getNumber(), posts.getTotalElements(),
 						posts.getTotalPages()));
 		return ResponseEntity.ok(pagedModel);

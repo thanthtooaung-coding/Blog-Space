@@ -50,4 +50,7 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted = false;
 }

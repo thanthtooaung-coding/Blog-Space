@@ -1,5 +1,6 @@
 package com.vinn.blogspace.user.service.impl;
 
+import com.vinn.blogspace.common.exceptions.ResourceNotFoundException;
 import com.vinn.blogspace.common.services.impl.BaseServiceImpl;
 import com.vinn.blogspace.user.dto.UserCreateDto;
 import com.vinn.blogspace.user.dto.UserDto;
@@ -9,9 +10,9 @@ import com.vinn.blogspace.user.repository.UserRepository;
 import com.vinn.blogspace.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +37,16 @@ public class UserServiceImplement extends BaseServiceImpl<User, Long> implements
 
     @Override
     public UserDto getUserByUsername(String username) {
-        return null;
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
-        return null;
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -51,6 +56,15 @@ public class UserServiceImplement extends BaseServiceImpl<User, Long> implements
 
     @Override
     public UserDto createUser(UserCreateDto userDto) {
+
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new DataIntegrityViolationException("Email already exists.");
+        }
+
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            throw new DataIntegrityViolationException("Username already exists.");
+        }
+
         User user = modelMapper.map(userDto, User.class);
         User savedUser = create(user);
         return modelMapper.map(savedUser, UserDto.class);
