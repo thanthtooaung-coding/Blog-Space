@@ -43,4 +43,9 @@ public class Comment {
 
     @Enumerated(EnumType.STRING)
     private CommentStatus status; // Enum type for CommentStatus (APPROVED, PENDING, REJECTED)
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedDate = LocalDateTime.now();
+    }
 }
