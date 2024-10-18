@@ -12,4 +12,10 @@ import org.springframework.stereotype.Component;
 public class ApiKeys {
     @Value("${youtube.api.key}")
     private String youTubeApiKey;
+
+    @Value("${app.jwtSecret}")
+    private String jwtSecret;
+
+    @Value("${app.jwtExpirationInMs}")
+    private int jwtExpirationInMs;
 }

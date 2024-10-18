@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class UserServiceImplement extends BaseServiceImpl<User, Long> implements
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected JpaRepository<User, Long> getRepository() { return userRepository; }
@@ -66,6 +68,7 @@ public class UserServiceImplement extends BaseServiceImpl<User, Long> implements
         }
 
         User user = modelMapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User savedUser = create(user);
         return modelMapper.map(savedUser, UserDto.class);
     }

@@ -1,5 +1,5 @@
 package com.vinn.blogspace.user.enums;
 
 public enum UserRole {
-    ADMIN, AUTHOR, SUBSCRIBER
+    ROLE_ADMIN, ROLE_AUTHOR, ROLE_SUBSCRIBER
 }
