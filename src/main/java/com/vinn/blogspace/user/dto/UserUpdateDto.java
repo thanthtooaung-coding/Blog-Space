@@ -30,5 +30,5 @@ public class UserUpdateDto {
     @Size(min = 6, message = "Password should be at least 6 characters")
     private String password;
 
-    private UserRole role = UserRole.SUBSCRIBER;
+    private UserRole role;
 }

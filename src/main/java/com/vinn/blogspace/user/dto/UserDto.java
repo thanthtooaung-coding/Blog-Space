@@ -22,17 +22,9 @@ public class UserDto {
 
     private Long id; // Unique identifier for the user
 
-    @NotBlank(message = "Username is required")
-    @Size(max = 50, message = "Username cannot exceed 50 characters")
     private String username;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
     private String email;
-
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password should be at least 6 characters")
-    private String password;
 
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
